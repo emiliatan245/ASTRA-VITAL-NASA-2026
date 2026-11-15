@@ -1,0 +1,15 @@
+ASTRA-VITAL logo fix
+
+The website HTML references this exact case-sensitive path:
+assets/astra-orbit-mark.png
+
+To fix the broken logo on GitHub Pages:
+1. Open your repository: ASTRA-VITAL-NASA-2026.
+2. Open the lowercase `assets` folder.
+3. Choose Add file -> Upload files.
+4. Upload this `astra-orbit-mark.png` file.
+5. Commit the change to the `main` branch.
+6. Wait for GitHub Pages deployment, then refresh the website with Ctrl+Shift+R.
+
+Do not rename the file or folder. GitHub Pages paths are case-sensitive.
+The transparent PNG is designed for ASTRA-VITAL's dark blue interface.
