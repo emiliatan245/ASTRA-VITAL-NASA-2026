@@ -1,0 +1,23 @@
+ASTRA-VITAL v1.2.1 — FIX THE WELCOME SCREEN
+
+WHY IT LOOKED STUCK
+The welcome screen used overflow:hidden and a large vertically centred content block. On your laptop viewport, the two launch buttons were pushed below the visible area and clipped. The buttons were present in the HTML, but not visible on screen.
+
+INSTALL THE FIX WITHOUT LOSING YOUR LOCAL DATA
+1. Close the ASTRA-VITAL browser tab.
+2. Back up your ASTRA_VITAL folder.
+3. Extract this patch ZIP.
+4. Copy the three files into the existing ASTRA_VITAL project folder:
+   - index.html
+   - violet-theme.css
+   - body-view-ui.js
+5. Replace those three files when Windows asks.
+6. Reopen index.html in Chrome.
+7. Press Ctrl + Shift + R.
+
+WHAT YOU SHOULD SEE
+- An ENTER FLIGHT DECK button in the top-right of the welcome screen.
+- The main ENTER FLIGHT DECK button beneath the introductory feature chips.
+- An EXPLORE BODY SYSTEMS button beside it.
+
+The Remember this device option remains available. Local browser data is not intentionally cleared by this patch.

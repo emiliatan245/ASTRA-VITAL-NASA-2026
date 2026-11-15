@@ -1,0 +1,17 @@
+ASTRA-VITAL v1.7.1
+
+RECOMMENDED (Windows):
+1. Keep this whole folder together.
+2. Make sure you have an internet connection for the detailed anatomy model.
+3. Double-click START_ASTRA_VITAL.bat.
+4. The app opens in your browser at http://127.0.0.1:8765/.
+5. Open Anatomy Explorer, select Male or Female, and choose a body layer. Named pointers identify the visible structures; click a label to open its information panel.
+
+The actual Open Anatomy 3D male/female model downloads from jsDelivr on first use.
+If the connection is unavailable or the browser blocks the model, ASTRA-VITAL displays its simplified procedural 3D fallback.
+
+ANATOMY CREDIT:
+Anatomy: BodyParts3D © The Database Center for Life Science (CC BY 4.0); female organs: Human Reference Atlas 3D Reference Organs, HuBMAP (CC BY 4.0); female body: MakeHuman (CC0). Modified by open-anatomy-3d, CC BY 4.0.
+Full attribution is in ANATOMY_ASSET_GUIDE.md.
+
+This is an educational prototype, not a medical device. Do not use it for diagnosis or real medical decisions.

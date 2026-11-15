@@ -1,0 +1,185 @@
+/* ASTRA-VITAL v1.4.1 — anatomy stage and pointer alignment repair */
+.body-stage-violet {
+  height: clamp(620px, 82vh, 800px) !important;
+  min-height: 620px;
+  max-height: 800px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Give the actual figure enough vertical room and blend its dark source canvas
+   into the stage instead of showing a small black rectangle. */
+#bodyVisualStage .body-view-image {
+  position: absolute !important;
+  z-index: 1;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: auto !important;
+  height: 97% !important;
+  max-height: 97% !important;
+  max-width: 78% !important;
+  object-fit: contain !important;
+  object-position: center center;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 15px 30px rgba(35, 158, 224, .20));
+  transition: opacity .28s ease, filter .28s ease;
+}
+
+#bodyVisualStage .body-view-image.view-changing {
+  opacity: .18;
+  filter: blur(3px);
+}
+
+/* Pointer layer shares the stage; JavaScript maps each marker to the visible
+   image bounds so the markers remain attached even when the image is letterboxed. */
+#bodyVisualStage .anatomy-pointer-layer {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  pointer-events: none;
+}
+
+#bodyVisualStage .body-hotspot-v3 {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 46px;
+  height: 46px;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+  border: 0;
+  background: transparent;
+  color: #8bdcff;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 6;
+}
+
+#bodyVisualStage .hotspot-core {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 12, 24, .93);
+  color: #f0fbff;
+  font: 700 11px var(--mono);
+  box-shadow: 0 0 0 5px rgba(67, 180, 236, .12), 0 0 22px currentColor;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+#bodyVisualStage .hotspot-label {
+  position: absolute;
+  left: calc(100% + 10px);
+  right: auto;
+  top: 50%;
+  transform: translate(5px, -50%);
+  width: max-content;
+  max-width: 145px;
+  padding: 7px 10px;
+  border: 1px solid currentColor;
+  border-radius: 7px;
+  background: rgba(2, 12, 23, .94);
+  color: #e9f7ff;
+  font: 600 9px/1.35 var(--mono);
+  letter-spacing: .035em;
+  white-space: normal;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .28);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+}
+
+#bodyVisualStage .body-hotspot-v3[data-side="left"] .hotspot-label {
+  left: auto;
+  right: calc(100% + 10px);
+  transform: translate(-5px, -50%);
+  text-align: right;
+}
+
+#bodyVisualStage .body-hotspot-v3:hover .hotspot-label,
+#bodyVisualStage .body-hotspot-v3:focus-visible .hotspot-label,
+#bodyVisualStage .body-hotspot-v3.selected .hotspot-label {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(0, -50%);
+}
+
+#bodyVisualStage .body-hotspot-v3[data-side="left"]:hover .hotspot-label,
+#bodyVisualStage .body-hotspot-v3[data-side="left"]:focus-visible .hotspot-label,
+#bodyVisualStage .body-hotspot-v3[data-side="left"].selected .hotspot-label {
+  transform: translate(0, -50%);
+}
+
+#bodyVisualStage .body-hotspot-v3:hover .hotspot-core,
+#bodyVisualStage .body-hotspot-v3:focus-visible .hotspot-core,
+#bodyVisualStage .body-hotspot-v3.selected .hotspot-core {
+  transform: scale(1.13);
+  background: rgba(11, 76, 112, .96);
+  box-shadow: 0 0 0 7px rgba(78, 193, 245, .19), 0 0 30px currentColor;
+}
+
+#bodyVisualStage .body-hotspot-v3:focus-visible {
+  outline: 2px solid #f4fbff;
+  outline-offset: 5px;
+  border-radius: 50%;
+}
+
+#bodyVisualStage .region-neuro { color: #82d7ff; }
+#bodyVisualStage .region-respiratory { color: #55c8f4; }
+#bodyVisualStage .region-cardio { color: #ff8da7; }
+#bodyVisualStage .region-immune { color: #76dfb8; }
+#bodyVisualStage .region-muscle { color: #ffc86c; }
+#bodyVisualStage .region-wellbeing { color: #a9c7ff; }
+
+@media (max-width: 760px) {
+  .body-stage-violet {
+    height: clamp(570px, 76vh, 700px) !important;
+    min-height: 570px;
+  }
+  #bodyVisualStage .body-view-image {
+    height: 96% !important;
+    max-height: 96% !important;
+    max-width: 82% !important;
+  }
+  #bodyVisualStage .body-hotspot-v3 { width: 40px; height: 40px; }
+  #bodyVisualStage .hotspot-core { width: 36px; height: 36px; font-size: 10px; }
+  #bodyVisualStage .hotspot-label { max-width: 112px; font-size: 8px; }
+}
+
+@media (max-width: 480px) {
+  .body-stage-violet {
+    height: clamp(540px, 74vh, 650px) !important;
+    min-height: 540px;
+  }
+  #bodyVisualStage .body-view-image {
+    height: 94% !important;
+    max-height: 94% !important;
+    max-width: 86% !important;
+  }
+  #bodyVisualStage .body-hotspot-v3 { width: 36px; height: 36px; }
+  #bodyVisualStage .hotspot-core { width: 32px; height: 32px; font-size: 9px; }
+  #bodyVisualStage .hotspot-label { max-width: 94px; font-size: 7px; padding: 5px 7px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #bodyVisualStage .body-view-image,
+  #bodyVisualStage .hotspot-core,
+  #bodyVisualStage .hotspot-label { transition: none !important; }
+}
+
+/* The generated female normal-form plate has asymmetric decorative negative
+   space; shift that plate slightly so its body centre aligns with the pointers. */
+#bodyVisualStage[data-active-profile="female"][data-active-view="normal"] .body-view-image {
+  transform: translate(-42%, -50%) !important;
+}

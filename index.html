@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#06101d" />
+  <meta name="description" content="ASTRA-VITAL is an educational astronaut health-monitoring prototype using clearly labelled synthetic demonstration data and NASA research references." />
+  <title>ASTRA-VITAL | Mission Health Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="violet-theme.css" />
+  <link rel="stylesheet" href="blue-theme.css" />
+  <link rel="stylesheet" href="astra-blue-final.css" />
+  <link rel="stylesheet" href="anatomy-layout-fix.css" />
+  <link rel="stylesheet" href="anatomy-station-v1.5.css" />
+  <link rel="stylesheet" href="astra-3d-viewer.css" />
+  <link rel="stylesheet" href="real-anatomy-atlas.css" />
+  <link rel="stylesheet" href="anatomy-named-pointers.css" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="welcome-screen" id="welcomeScreen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle">
+    <div class="welcome-backdrop-grid" aria-hidden="true"></div>
+    <div class="welcome-orbit welcome-orbit-one" aria-hidden="true"></div>
+    <div class="welcome-orbit welcome-orbit-two" aria-hidden="true"></div>
+    <header class="welcome-topline">
+      <span class="welcome-live"><i></i> FLIGHT SYSTEMS ONLINE</span>
+      <div class="welcome-top-actions"><span class="welcome-version">ASTRA-VITAL · 1.7.1</span><button class="welcome-quick-enter" id="welcomeQuickEnter" type="button">ENTER FLIGHT DECK ↗</button></div>
+    </header>
+
+    <section class="welcome-hero" aria-labelledby="welcomeTitle">
+      <div class="welcome-content">
+        <div class="welcome-brand-lockup"><img src="assets/astra-orbit-mark.png" alt="ASTRA orbital A brand mark"><div><span>MISSION HEALTH INTELLIGENCE</span><strong>ASTRA<span>-VITAL</span></strong></div></div>
+        <div class="welcome-kicker">THE CREW IS THE MISSION</div>
+        <h1 id="welcomeTitle">Understand the <em>human system.</em><br>Support the mission.</h1>
+        <p class="welcome-subtitle">A crew health assessment tool for spaceflight. Explore body systems, review health indicators and learn from NASA research.</p>
+        <div class="welcome-feature-row">
+          <div><b>01</b><span>Explore anatomy</span></div><div><b>02</b><span>Review health signals</span></div><div><b>03</b><span>Learn from evidence</span></div>
+        </div>
+        <div class="welcome-actions"><button class="welcome-launch" id="launchFlightDeck" type="button">ENTER FLIGHT DECK <span>↗</span></button><button class="welcome-secondary" id="welcomeExploreAnatomy" type="button">EXPLORE BODY SYSTEMS</button></div>
+        <label class="welcome-remember"><input type="checkbox" id="rememberWelcome"> Skip the welcome screen next time on this device</label>
+      </div>
+      <div class="welcome-visual" aria-hidden="true">
+        <div class="welcome-visual-orbit orbit-large"></div><div class="welcome-visual-orbit orbit-small"></div>
+        <div class="welcome-earth"><span></span></div>
+        <div class="welcome-rocket-wrap">
+          <svg class="welcome-rocket" viewBox="0 0 180 260" role="img" aria-label="Decorative rocket illustration">
+            <defs><linearGradient id="rocketHull" x1="0" x2="1"><stop stop-color="#d9f7ff"/><stop offset=".48" stop-color="#75c9ef"/><stop offset="1" stop-color="#2576ac"/></linearGradient><linearGradient id="rocketFlame" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#eaffff"/><stop offset=".42" stop-color="#65d8ff"/><stop offset="1" stop-color="#2275ff"/></linearGradient></defs>
+            <path d="M90 13 C55 47 46 92 51 145 L90 179 L129 145 C134 92 125 47 90 13Z" fill="url(#rocketHull)" stroke="#d4f6ff" stroke-width="4"/>
+            <circle cx="90" cy="88" r="19" fill="#07192c" stroke="#8de6ff" stroke-width="5"/><circle cx="90" cy="88" r="8" fill="#83e8ff" opacity=".7"/>
+            <path d="M53 116 L20 151 L49 158 L58 145 M127 116 L160 151 L131 158 L122 145" fill="#236d9e" stroke="#8adfff" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M70 165 L90 188 L110 165 L105 212 L90 239 L75 212Z" fill="url(#rocketFlame)" opacity=".95"/>
+            <path d="M84 174 L90 195 L96 174" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <span class="rocket-trail"></span>
+        </div>
+        <div class="welcome-astronaut">
+          <svg viewBox="0 0 170 210" class="astronaut-figure">
+            <defs><linearGradient id="suitBlue" x1="0" x2="1"><stop stop-color="#e6f8ff"/><stop offset=".5" stop-color="#85c7e8"/><stop offset="1" stop-color="#28628e"/></linearGradient></defs>
+            <path d="M58 63 Q85 46 112 63 L126 89 L137 154 Q113 174 85 170 Q57 174 33 154 L44 89Z" fill="url(#suitBlue)" stroke="#d5f5ff" stroke-width="4"/>
+            <path d="M52 79 Q85 91 118 79 L110 113 Q85 126 60 113Z" fill="#08213b" stroke="#66d5ff" stroke-width="4"/>
+            <ellipse cx="85" cy="48" rx="39" ry="39" fill="url(#suitBlue)" stroke="#e5faff" stroke-width="5"/><ellipse cx="85" cy="49" rx="27" ry="26" fill="#071c34" stroke="#6bd8ff" stroke-width="4"/><path d="M68 45 Q85 32 101 43" fill="none" stroke="#c9f5ff" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+            <path d="M44 92 L22 118 L31 154 L49 148 L59 111 M126 92 L148 118 L139 154 L121 148 L111 111" fill="url(#suitBlue)" stroke="#b9efff" stroke-width="4"/>
+            <path d="M54 166 L48 197 M116 166 L122 197" stroke="#8bdfff" stroke-width="13" stroke-linecap="round"/><path d="M66 139 H104 M68 151 H102" stroke="#1e6b9e" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+          <span>CREW FIRST</span>
+        </div>
+        <div class="welcome-visual-label label-top"><i></i> ORBITAL HEALTH SYSTEMS</div>
+        <div class="welcome-visual-label label-bottom">EARTH · CREW · MISSION</div>
+      </div>
+    </section>
+
+    <section class="welcome-briefing" aria-label="Mission and challenge details">
+      <div class="welcome-briefing-heading"><div><span class="welcome-kicker">MISSION BRIEFING / 2026</span><h2>One mission. <em>Every crew signal matters.</em></h2></div><span class="briefing-index">ASTRA / BRIEF 01</span></div>
+      <div class="welcome-brief-grid">
+        <article class="welcome-brief-card"><span class="brief-card-index">01 / THE CHALLENGE</span><h3>Health assessment in space</h3><p>Microgravity, radiation, isolation and distance from Earth can affect human health. Crew members need clear ways to assess health indicators and know when to follow mission medical procedures.</p><span class="brief-card-tag">NASA SPACE APPS · 2026</span></article>
+        <article class="welcome-brief-card"><span class="brief-card-index">02 / OUR APPROACH</span><h3>Measure · understand · review</h3><p>ASTRA-VITAL combines health indicators, an interactive body-systems atlas, health trends, mission context and transparent scenario screening.</p><span class="brief-card-tag">CREW-CENTRED WORKFLOW</span></article>
+        <article class="welcome-brief-card"><span class="brief-card-index">03 / THE WORKSPACE</span><h3>From signal to context</h3><p>Choose a body reference, explore a system, enter simulated measurements and review the evidence behind each topic.</p><span class="brief-card-tag">EDUCATIONAL PROTOTYPE</span></article>
+        <article class="welcome-brief-card welcome-brief-card-accent"><span class="brief-card-index">04 / SCIENCE BOUNDARY</span><h3>Evidence before inference</h3><p>Demo telemetry and model labels are synthetic. NASA research retains its original sample, measurement, units and timepoint. This tool does not diagnose or prescribe treatment.</p><span class="brief-card-tag">TRANSPARENT BY DESIGN</span></article>
+      </div>
+    </section>
+    <footer class="welcome-bottom"><span>EDUCATIONAL PROTOTYPE · SYNTHETIC DEMONSTRATION DATA</span><span>NOT A MEDICAL DEVICE · NOT AFFILIATED WITH NASA</span></footer>
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#overview" aria-label="ASTRA-VITAL overview">
+        <span class="brand-emblem"><img src="assets/astra-orbit-mark.png" alt="ASTRA orbital A emblem"></span>
+        <span class="brand-copy"><strong>ASTRA<span>-VITAL</span></strong><small>MISSION HEALTH INTELLIGENCE</small></span>
+      </a>
+
+      <div class="mission-chip"><span class="pulse-dot"></span><span>MISSION SIMULATION</span></div>
+
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">◫</span><span>Mission console</span><kbd>01</kbd></button>
+        <button class="nav-item" data-view="assessment"><span class="nav-icon">＋</span><span>Crew assessment</span><kbd>02</kbd></button>
+        <button class="nav-item" data-view="bodymap"><span class="nav-icon">◉</span><span>Anatomy explorer</span><kbd>03</kbd></button>
+        <button class="nav-item" data-view="routine"><span class="nav-icon">✦</span><span>Mission routine</span><kbd>04</kbd></button>
+        <button class="nav-item" data-view="checkin"><span class="nav-icon">▣</span><span>Daily log</span><kbd>05</kbd></button>
+        <button class="nav-item" data-view="trends"><span class="nav-icon">⌁</span><span>Health trends</span><kbd>06</kbd></button>
+        <button class="nav-item" data-view="mission"><span class="nav-icon">◎</span><span>Mission context</span><kbd>07</kbd></button>
+        <button class="nav-item" data-view="research"><span class="nav-icon">▤</span><span>Research library</span><kbd>08</kbd></button>
+        <button class="nav-item" data-view="evidence"><span class="nav-icon">⌗</span><span>NASA data lab</span><kbd>09</kbd></button>
+        <button class="nav-item" data-view="model"><span class="nav-icon">◈</span><span>AI model card</span><kbd>10</kbd></button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+      <div class="crew-card">
+        <div class="crew-avatar">C1</div>
+        <div class="crew-info"><strong>Demo crew member</strong><small>CREW ID · AV-001</small></div>
+        <span class="crew-status" title="Local demo profile"></span>
+      </div>
+      <div class="sidebar-foot"><span>ASTRA-VITAL v1.4.2</span><span>NASA SPACE APPS · 2026</span></div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
+        <div class="breadcrumb"><span>FLIGHT DECK</span><i>/</i><strong id="breadcrumbCurrent">OVERVIEW</strong></div>
+        <div class="topbar-right">
+          <button class="welcome-reopen" id="reopenWelcome" type="button" aria-label="Open welcome screen">WELCOME ↗</button>
+          <div class="utc-clock"><span class="clock-dot"></span><span id="utcClock">--:--:-- UTC</span></div>
+          <span class="demo-pill">SYNTHETIC DATA</span>
+        </div>
+      </header>
+
+      <section class="view active" id="view-overview">
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow">HUMAN RESEARCH · CREW WELLNESS</div>
+            <h1>Mission <em>overview</em></h1>
+            <p class="page-subtitle">Crew-led health assessment, body-system context, explainable synthetic pattern screening and mission routines.</p>
+          </div>
+          <div class="flight-badge"><span class="orbit-icon">◉</span><div><small>SIMULATED MISSION DAY</small><strong id="missionDay">034</strong></div></div>
+        </div>
+
+        <div class="identity-banner"><img src="assets/astra-orbit-mark.png" alt="Participant-provided ASTRA orbital A project emblem"><div><span class="section-kicker">ASTRA-VITAL · MISSION HEALTH INTELLIGENCE</span><strong>See the signal. Understand the system. Support the crew.</strong><small>Interactive educational prototype · Kharagpur Local Event</small><em>PROJECT BRAND MARK · NOT NASA BRANDING</em></div></div>
+        <div class="notice-banner"><span class="notice-icon">i</span><div><strong>Educational simulation — not a medical device</strong><p>All readings shown here are fictional demonstration data. Prototype flags compare entries with a demo personal baseline; they are not diagnoses or flight-medicine limits.</p></div><button class="notice-close" id="dismissNotice" aria-label="Dismiss notice">×</button></div>
+
+        <div class="section-head"><div><span class="section-kicker">01 / CURRENT SNAPSHOT</span><h2>Today at a glance</h2></div><button class="text-button" data-goto="assessment">Run crew assessment <span>↗</span></button></div>
+        <div class="metric-grid">
+          <article class="metric-card accent-cyan">
+            <div class="metric-top"><span class="metric-name">RESTING HEART RATE</span><span class="metric-symbol">♡</span></div>
+            <div class="metric-value"><strong id="metricHr">68</strong><span>bpm</span></div>
+            <div class="metric-foot"><span class="metric-tag" id="hrTag">NEAR BASELINE</span><span class="metric-reference">Demo baseline <b id="hrBaselineLabel">66 bpm</b></span></div>
+            <div class="sparkline" id="hrSpark"></div>
+          </article>
+          <article class="metric-card accent-violet">
+            <div class="metric-top"><span class="metric-name">SLEEP DURATION</span><span class="metric-symbol">◔</span></div>
+            <div class="metric-value"><strong id="metricSleep">7.4</strong><span>hours</span></div>
+            <div class="metric-foot"><span class="metric-tag" id="sleepTag">PERSONAL TREND</span><span class="metric-reference">Demo target <b id="sleepTargetLabel">8.0 h</b></span></div>
+            <div class="sparkline" id="sleepSpark"></div>
+          </article>
+          <article class="metric-card accent-amber">
+            <div class="metric-top"><span class="metric-name">MOOD CHECK-IN</span><span class="metric-symbol">☼</span></div>
+            <div class="metric-value"><strong id="metricMood">3</strong><span>/ 5</span></div>
+            <div class="metric-foot"><span class="metric-tag">SELF-REPORTED</span><span class="metric-reference">Crew wellness</span></div>
+            <div class="rating-dots" id="moodDots" aria-label="Mood rating out of five"></div>
+          </article>
+          <article class="metric-card accent-rose">
+            <div class="metric-top"><span class="metric-name">FATIGUE CHECK-IN</span><span class="metric-symbol">⌁</span></div>
+            <div class="metric-value"><strong id="metricFatigue">2</strong><span>/ 5</span></div>
+            <div class="metric-foot"><span class="metric-tag">SELF-REPORTED</span><span class="metric-reference">Crew wellness</span></div>
+            <div class="rating-dots" id="fatigueDots" aria-label="Fatigue rating out of five"></div>
+          </article>
+        </div>
+
+        <div class="integrity-strip" aria-label="Data quality summary">
+          <div><span>RECORDS STORED LOCALLY</span><strong id="dataRecordTotal">07</strong></div>
+          <div><span>REQUIRED-FIELD COMPLETENESS</span><strong id="dataCompleteness">100%</strong></div>
+          <div><span>LATEST OBSERVATION</span><strong id="latestRecordDate">14 Nov</strong></div>
+          <div class="integrity-note"><span class="integrity-pulse"></span><p>Local demo dataset · no live sensors connected</p></div>
+        </div>
+
+        <div class="content-grid overview-grid">
+          <article class="panel chart-panel">
+            <div class="panel-heading"><div><span class="section-kicker">LAST 7 ENTRIES</span><h3>Resting heart-rate trend</h3></div><span class="panel-unit">BPM</span></div>
+            <div class="chart-wrap"><canvas id="overviewHrChart" height="220" aria-label="Chart of synthetic resting heart-rate readings"></canvas></div>
+            <div class="chart-legend"><span><i class="legend-dot cyan"></i>Demo readings</span><span><i class="legend-line"></i>Personal baseline</span></div>
+          </article>
+          <article class="panel status-panel">
+            <div class="panel-heading"><div><span class="section-kicker">RULE-BASED REVIEW</span><h3>Attention queue</h3></div><span class="queue-count" id="queueCount">0</span></div>
+            <div id="alertList" class="alert-list"></div>
+            <p class="panel-note">Flags are transparent prototype prompts based on personal demo baselines, not medical advice.</p>
+          </article>
+        </div>
+
+        <div class="content-grid lower-grid">
+          <article class="panel sleep-panel">
+            <div class="panel-heading"><div><span class="section-kicker">RECOVERY SIGNAL</span><h3>Sleep over time</h3></div><span class="panel-unit">HOURS</span></div>
+            <div class="chart-wrap compact-chart"><canvas id="overviewSleepChart" height="150" aria-label="Chart of synthetic sleep-duration readings"></canvas></div>
+          </article>
+          <article class="panel mission-note-panel">
+            <div class="mission-note-art"><div class="planet planet-one"></div><div class="planet-ring"></div><div class="tiny-star star-one">✦</div><div class="tiny-star star-two">✧</div></div>
+            <div class="mission-note-copy"><span class="section-kicker">MISSION CONTEXT</span><h3>Space changes the human baseline.</h3><p>Microgravity, radiation, isolation and confinement can affect multiple body systems. ASTRA-VITAL is designed to make recorded signals and research context easier to review.</p><button class="text-button" data-goto="mission">Explore context <span>↗</span></button></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="view-assessment">
+        <div class="page-heading">
+          <div><div class="eyebrow">CREW INPUT · SYNTHETIC SCENARIO MODEL</div><h1>Crew <em>assessment</em></h1><p class="page-subtitle">Enter a simulated measurement set, check signal quality, and see how the demonstration model groups the pattern.</p></div>
+          <span class="demo-pill">SYNTHETIC MODEL · NOT CLINICAL</span>
+        </div>
+        <div class="notice-banner assessment-warning"><span class="notice-icon">!</span><div><strong>Demonstration only — never use for real health decisions</strong><p>All scenario values and model labels are synthetic. This classifier has not been clinically validated, trained on astronaut medical records, or approved for flight operations. For actual symptoms or readings, use the mission's approved medical procedures and qualified flight-surgeon support.</p></div></div>
+        <div class="assessment-layout">
+          <article class="panel assessment-form-panel">
+            <div class="panel-heading"><div><span class="section-kicker">01 / SENSOR & CREW INPUT</span><h3>Build a simulated observation</h3></div><span class="panel-unit">10 MODEL FEATURES</span></div>
+            <div class="form-grid">
+              <label class="field"><span>Mission environment</span><select id="missionEnvironment"><option value="leo">Orbital station / LEO</option><option value="transit">Transit spacecraft</option><option value="lunar">Lunar surface base</option><option value="mars">Mars surface habitat</option></select></label>
+              <label class="field"><span>Measurement signal quality</span><select id="signalQuality"><option value="good">Good — repeatable demo reading</option><option value="uncertain">Uncertain — possible motion / contact issue</option><option value="poor">Poor — do not classify this set</option></select><em>Quality is a gate, not a model feature.</em></label>
+              <label class="field"><span>Heart rate <small>(beats/min)</small></span><input id="sensorHr" type="number" min="30" max="220" value="68" step="1"><em>Example wearable / pulse signal.</em></label>
+              <label class="field"><span>Oxygen saturation <small>(%)</small></span><input id="sensorSpo2" type="number" min="70" max="100" value="98" step="0.1"><em>Example pulse-oximeter signal.</em></label>
+              <label class="field"><span>Respiratory rate <small>(breaths/min)</small></span><input id="sensorResp" type="number" min="4" max="45" value="15" step="1"><em>Use only an approved measurement method.</em></label>
+              <label class="field"><span>Body temperature <small>(°C)</small></span><input id="sensorTemp" type="number" min="33" max="42" value="36.7" step="0.1"><em>Example approved thermometer reading.</em></label>
+              <label class="field"><span>Sleep duration <small>(hours)</small></span><input id="sensorSleep" type="number" min="0" max="24" value="7.6" step="0.1"></label>
+              <label class="field"><span>Fatigue self-report <small>(1 low – 5 high)</small></span><select id="sensorFatigue"><option value="1">1 — Very low</option><option value="2" selected>2 — Low</option><option value="3">3 — Moderate</option><option value="4">4 — High</option><option value="5">5 — Very high</option></select></label>
+              <label class="field"><span>Mood self-report <small>(1 low – 5 positive)</small></span><select id="sensorMood"><option value="1">1 — Very low</option><option value="2">2 — Low</option><option value="3" selected>3 — Neutral</option><option value="4">4 — Positive</option><option value="5">5 — Very positive</option></select></label>
+              <label class="field"><span>Dizziness in this scenario?</span><select id="sensorDizziness"><option value="0">No</option><option value="1">Yes</option></select></label>
+              <label class="field"><span>Breathlessness in this scenario?</span><select id="sensorBreathlessness"><option value="0">No</option><option value="1">Yes</option></select></label>
+              <label class="field"><span>Nausea in this scenario?</span><select id="sensorNausea"><option value="0">No</option><option value="1">Yes</option></select></label>
+              <label class="field full-field"><span>Context note <small>(optional, fictional)</small></span><input id="sensorContext" type="text" maxlength="160" placeholder="e.g. post-scheduled activity scenario; sensor demo set A"></label>
+            </div>
+            <div class="measurement-guide" id="environmentGuide"><strong>Orbital station / LEO</strong><p>Context only: follow the assigned crew medical measurement schedule and the device instructions. This environment selector does not alter the model prediction.</p></div>
+            <p class="field-footnote">Input bounds are software validation ranges, not medical reference ranges. Do not enter real personal or medical information.</p>
+            <div class="form-actions"><button class="button button-primary" id="runScenarioModel" type="button">Run synthetic pattern model →</button><button class="button button-secondary" id="loadRoutineScenario" type="button">Load routine demo</button><button class="button button-ghost" id="loadComplexScenario" type="button">Load mixed-signal demo</button></div>
+            <div class="form-feedback" id="assessmentFeedback" role="status" aria-live="polite">Ready. Select a fictional scenario or enter simulated values.</div>
+          </article>
+          <aside class="panel model-result-panel" id="modelResultPanel" aria-live="polite">
+            <span class="section-kicker">02 / MODEL OUTPUT</span><h3>Waiting for assessment</h3>
+            <div class="model-empty"><div class="model-orbit">◈</div><p>Run a simulated assessment to see the Random Forest model's scenario classification and class probabilities.</p></div>
+            <div class="result-disclaimer"><strong>What this means</strong><p>The model predicts one of three synthetic labels. It does not estimate medical risk, diagnose a condition, or recommend treatment.</p></div>
+          </aside>
+        </div>
+        <article class="panel assessment-history-panel">
+          <div class="panel-heading"><div><span class="section-kicker">LOCAL SIMULATION LOG</span><h3>Saved synthetic assessment scenarios</h3><p class="panel-note">These are fictional test scenarios saved in this browser. They are not crew records.</p></div><button class="text-button" id="exportAssessmentHistory" type="button">Export scenario log ↓</button></div>
+          <div class="table-wrap"><table><thead><tr><th>TIME</th><th>ENVIRONMENT</th><th>HR</th><th>SpO₂</th><th>RESP</th><th>TEMP</th><th>MODEL LABEL</th><th>TOP SCORE</th></tr></thead><tbody id="assessmentHistoryBody"><tr><td colspan="8" class="empty-row">No saved scenarios yet. Run a synthetic assessment and choose Save to local log.</td></tr></tbody></table></div>
+        </article>
+      </section>
+
+      <section class="view" id="view-bodymap">
+        <div class="page-heading body-explorer-heading">
+          <div>
+            <div class="eyebrow">MISSION ATLAS · INTERACTIVE ANATOMY</div>
+            <h1>Explore the <em>human body</em></h1>
+            <p class="page-subtitle">Choose a body reference, then explore the normal body, nervous system, organs and circulation, skeleton, or muscles. Select a pointer for more information.</p>
+          </div>
+          <div class="body-explorer-status"><span class="pulse-dot"></span><div><small>EDUCATIONAL ATLAS</small><strong>SIX ANATOMY VIEWS</strong></div></div>
+        </div>
+
+        <section class="anatomy-control-deck panel" id="bodyProfileSelector" aria-label="Anatomy display controls">
+          <div class="anatomy-control-row profile-control-row">
+            <div class="control-label-group"><span class="section-kicker">01 / BODY REFERENCE</span><strong>Choose a reference</strong></div>
+            <div class="segmented-control profile-segment" role="group" aria-label="Choose body reference">
+              <button type="button" class="body-profile-option" data-body-profile="male" aria-pressed="false">Male body</button>
+              <button type="button" class="body-profile-option" data-body-profile="female" aria-pressed="false">Female body</button>
+            </div>
+            <span class="profile-selection-status" id="bodyProfileStatus" aria-live="polite">Choose a reference to load the atlas.</span>
+          </div>
+          <div class="anatomy-control-divider"></div>
+          <div class="anatomy-control-row view-control-row">
+            <div class="control-label-group"><span class="section-kicker">02 / ANATOMICAL LAYER</span><strong>Select a view</strong></div>
+            <div class="segmented-control anatomy-view-tabs" id="bodyViewSwitcher" role="tablist" aria-label="Choose anatomical view" hidden>
+              <button class="body-view-option active" type="button" data-body-view="normal" role="tab" aria-selected="true">Normal body</button>
+              <button class="body-view-option" type="button" data-body-view="skeleton" role="tab" aria-selected="false">Skeleton</button>
+              <button class="body-view-option" type="button" data-body-view="muscular" role="tab" aria-selected="false">Muscular system</button>
+              <button class="body-view-option" type="button" data-body-view="circulation" role="tab" aria-selected="false">Circulation</button>
+              <button class="body-view-option" type="button" data-body-view="nervous" role="tab" aria-selected="false">Nervous system</button>
+              <button class="body-view-option" type="button" data-body-view="all" role="tab" aria-selected="false">All systems</button>
+            </div>
+          </div>
+          <div class="anatomy-control-divider"></div>
+          <div class="anatomy-control-row motion-control-row">
+            <div class="control-label-group"><span class="section-kicker">03 / VIEW MOTION</span><strong>Visualise the model</strong></div>
+            <div class="motion-control-buttons">
+              <button type="button" class="motion-control-button" id="bodyAutoRotate" aria-pressed="false"><span>↻</span> Auto-rotate</button>
+              <button type="button" class="motion-control-button" id="bodyMicrogravity" aria-pressed="false"><span>✧</span> Microgravity</button>
+              <button type="button" class="motion-control-button reset-motion-button" id="bodyResetView"><span>⟲</span> Reset view</button>
+            </div>
+            <span class="motion-status" id="bodyMotionStatus" aria-live="polite">Static view</span>
+          </div>
+        </section>
+        <div class="bodymap-layout bodymap-layout-violet bodymap-layout-blue">
+          <article class="panel bodymap-panel bodymap-atlas-panel">
+            <div class="bodymap-topline">
+              <div>
+                <span class="section-kicker" id="bodyViewKicker">EXTERNAL HUMAN FORM</span>
+                <p class="bodymap-helper" id="bodyViewDescription">Select a named pointer on the anatomy to explore a structure.</p>
+              </div>
+              <span class="panel-unit" id="bodyViewCounter">ANATOMY LAYER</span>
+            </div>
+            <div class="body-stage-violet" id="bodyVisualStage">
+              <div class="body-stage-grid"></div>
+              <div class="body-stage-orbit orbit-a"></div><div class="body-stage-orbit orbit-b"></div>
+              <div class="body-image-wrap body-3d-wrap" id="bodyImageWrap" hidden>
+                <canvas id="astraRealAnatomyCanvas" class="astra-real-anatomy-canvas" aria-label="Real three-dimensional human anatomy model from Open Anatomy 3D. Drag to rotate, scroll to zoom, and click anatomical structures." hidden></canvas>
+                <canvas id="astraAnatomy3DCanvas" class="astra-anatomy-3d-canvas" aria-label="Interactive three-dimensional educational human anatomy model. Drag to rotate, use the wheel to zoom, and select named anatomical pointers."></canvas>
+                <div id="anatomyPointerLayer" class="anatomy-pointer-layer" aria-label="Clickable body-system pointers"></div>
+              </div>
+              <div class="body-profile-gate" id="bodyProfileGate"><span class="profile-gate-ring">◎</span><strong>Choose a body reference</strong><p>Select Male or Female above to load the anatomy atlas.</p></div>
+              <div class="body-stage-watermark">OPEN ANATOMY 3D · EDUCATIONAL MODEL · NOT FOR DIAGNOSIS</div>
+              <div class="real-anatomy-status" id="realAnatomyStatus" aria-live="polite">Open Anatomy 3D model loads when a body reference is selected. Internet connection required on first use.</div>
+              <div class="body-stage-caption"><span class="stage-caption-dot"></span><span id="bodyStageCaption">CHOOSE A BODY REFERENCE TO BEGIN</span></div>
+            </div>
+            <div class="body-stage-footer">
+              <div><span class="stage-state-dot"></span><span id="bodySelectedHint">Choose Male or Female above</span></div>
+              <span>DRAG TO ROTATE · SCROLL TO ZOOM · POINTERS TO EXPLORE</span>
+            </div>
+            <div class="bodymap-legend bodymap-legend-violet" aria-label="Quick body-system selectors">
+              <button type="button" class="body-region-chip" data-region="brain" aria-pressed="false"><i class="system-dot neuro-dot"></i>Brain & balance</button>
+              <button type="button" class="body-region-chip" data-region="respiratory" aria-pressed="false"><i class="system-dot resp-dot"></i>Breathing</button>
+              <button type="button" class="body-region-chip" data-region="cardio" aria-pressed="false"><i class="system-dot cardio-dot"></i>Circulation</button>
+              <button type="button" class="body-region-chip" data-region="musculoskeletal" aria-pressed="false"><i class="system-dot muscle-dot"></i>Bone & muscle</button>
+              <button type="button" class="body-region-chip" data-region="immune" aria-pressed="false"><i class="system-dot immune-dot"></i>Immune / metabolic</button>
+              <button type="button" class="body-region-chip" data-region="wellbeing" aria-pressed="false"><i class="system-dot wellbeing-dot"></i>Sleep / wellbeing</button>
+            </div>
+            <p class="anatomy-caption">Interactive 3D anatomical atlas using open, named human-body structures. Drag to rotate, scroll to zoom, select a named pointer or click a structure to explore a body system. Educational visualisation only—not for diagnosis or clinical decisions. Male and female models are separate anatomical references; they do not change health interpretation.</p>
+          </article>
+
+          <aside class="panel body-info-panel body-info-panel-v2" id="bodyInfoPanel" aria-live="polite">
+            <div class="body-info-panel-top"><span class="section-kicker">SYSTEM EXPLORER</span><span class="selection-state" id="bodySelectedTag">AWAITING SELECTION</span></div>
+            <h3 id="bodyInfoTitle">Choose a body system</h3>
+            <p id="bodyInfoIntro">Select a named pointer on the anatomy atlas. ASTRA-VITAL will explain the system and show what you can explore.</p>
+            <div class="body-info-empty body-info-empty-v2" id="bodyInfoEmpty">
+              <div class="empty-orbit-icon">◎</div>
+              <strong>What would you like to do?</strong>
+              <p>Choose a highlighted system to learn its function, explore spaceflight context, or create a practice concern for the assessment workflow.</p>
+              <div class="empty-intent-list"><span>Understand the system</span><span>Explore mission effects</span><span>Record a practice concern</span></div>
+            </div>
+            <div class="body-info-tabs" id="bodyInfoTabs" role="tablist" aria-label="Body system information views" hidden>
+              <button type="button" data-body-mode="overview" class="active" role="tab" aria-selected="true">Overview</button>
+              <button type="button" data-body-mode="spaceflight" role="tab" aria-selected="false">Spaceflight</button>
+              <button type="button" data-body-mode="concern" role="tab" aria-selected="false">My concern</button>
+            </div>
+            <div id="bodyInfoContent" class="body-info-content" hidden></div>
+            <div class="body-info-footer"><span>ⓘ</span><p>Educational support only. No diagnosis, treatment instruction, or flight medical decision is produced. Do not enter real personal medical information into this demo.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="view-routine">
+        <div class="page-heading"><div><div class="eyebrow">MISSION SUPPORT · ENGAGEMENT</div><h1>Mission <em>routine</em></h1><p class="page-subtitle">A lightweight checklist for assigned monitoring and wellbeing tasks. Points reward completing the workflow—not health outcomes.</p></div><div class="flight-badge"><span class="orbit-icon">✦</span><div><small>MISSION LOG XP</small><strong id="routineXp">000 XP</strong></div></div></div>
+        <div class="routine-summary-grid"><article class="panel routine-progress"><span class="section-kicker">TODAY'S ROUTINE</span><strong id="routineProgressText">0 / 6</strong><div class="progress-track"><span id="routineProgressBar"></span></div><p id="routineProgressCaption">Complete the assigned log tasks to build a consistent record.</p></article><article class="panel routine-streak"><span class="section-kicker">MISSION LOG STREAK</span><strong id="routineStreak">0 days</strong><p>Consecutive days with at least one checklist task completed. This is an engagement counter, not a health score.</p></article></div>
+        <div class="routine-grid" id="routineTaskGrid">
+          <label class="routine-task"><input type="checkbox" data-routine-task="device"><span class="routine-task-icon">⌁</span><span><strong>Confirm assigned sensor is ready</strong><small>Check device status using the mission-approved instructions.</small></span><b>+10 XP</b></label>
+          <label class="routine-task"><input type="checkbox" data-routine-task="measure"><span class="routine-task-icon">◉</span><span><strong>Record assigned measurements</strong><small>Use only the measurement schedule and method supplied by crew medical operations.</small></span><b>+10 XP</b></label>
+          <label class="routine-task"><input type="checkbox" data-routine-task="sleep"><span class="routine-task-icon">☾</span><span><strong>Complete sleep log</strong><small>Enter the assigned sleep-duration or sleep-quality record.</small></span><b>+10 XP</b></label>
+          <label class="routine-task"><input type="checkbox" data-routine-task="wellbeing"><span class="routine-task-icon">♡</span><span><strong>Complete wellbeing check-in</strong><small>Record a voluntary mood and fatigue self-report.</small></span><b>+10 XP</b></label>
+          <label class="routine-task"><input type="checkbox" data-routine-task="countermeasure"><span class="routine-task-icon">✧</span><span><strong>Log scheduled countermeasure</strong><small>Record completion of the exercise or other countermeasure already assigned by the mission team.</small></span><b>+10 XP</b></label>
+          <label class="routine-task"><input type="checkbox" data-routine-task="review"><span class="routine-task-icon">⌗</span><span><strong>Review observation context</strong><small>Check timestamps, sensor quality and notes before interpreting a trend.</small></span><b>+10 XP</b></label>
+        </div>
+        <div class="callout-strip"><span>ⓘ</span><div><strong>No streak pressure.</strong><p>Routine tasks are optional workflow aids. Missed tasks never reduce points, imply poor health, or replace mission schedules and crew medical instructions.</p></div></div>
+      </section>
+
+      <section class="view" id="view-model">
+        <div class="page-heading"><div><div class="eyebrow">MACHINE LEARNING · TRANSPARENCY</div><h1>Scenario <em>model</em></h1><p class="page-subtitle">Inspect the synthetic Random Forest classifier used in the crew-assessment demonstration.</p></div><span class="demo-pill">SYNTHETIC TRAINING ONLY</span></div>
+        <div class="model-card-grid"><article class="panel model-card-feature"><span class="section-kicker">ALGORITHM</span><h2>Random Forest</h2><p>51 decision trees · maximum depth 7 · balanced subsampling. Runs locally in your browser without an API or cloud service.</p><div class="model-metric-pair"><div><strong id="modelAccuracy">89.7%</strong><small>synthetic-label agreement</small></div><div><strong id="modelMacroF1">0.897</strong><small>synthetic macro-F1</small></div></div></article><article class="panel model-card-feature"><span class="section-kicker">TRAINING DATA</span><h2>18,000 synthetic rows</h2><p>Generated with a fixed random seed. 13,500 training rows and 4,500 held-out test rows. No astronaut records or patient data.</p><div class="model-metric-pair"><div><strong>10</strong><small>input features</small></div><div><strong>3</strong><small>scenario labels</small></div></div></article></div>
+        <article class="panel model-card-panel"><div class="panel-heading"><div><span class="section-kicker">GLOBAL FEATURE IMPORTANCE</span><h3>What the synthetic model used most</h3></div><span class="panel-unit">MODEL-INTERNAL · NOT MEDICAL</span></div><p class="muted-copy">These are global feature-importance values across the synthetic training set. They do not explain a specific person's result and are not evidence that a signal is medically more important.</p><div id="featureImportanceBars" class="feature-importance-list"></div></article>
+        <article class="panel model-card-panel"><div class="panel-heading"><div><span class="section-kicker">VALIDATION</span><h3>Holdout confusion matrix</h3></div><span class="panel-unit">SYNTHETIC LABELS</span></div><div class="matrix-wrap"><table class="confusion-matrix"><thead><tr><th>Actual \ Predicted</th><th>Routine</th><th>Review</th><th>Priority</th></tr></thead><tbody><tr><th>Routine</th><td>1370</td><td>104</td><td>34</td></tr><tr><th>Review</th><td>117</td><td>1302</td><td>81</td></tr><tr><th>Priority</th><td>18</td><td>108</td><td>1366</td></tr></tbody></table></div><p class="field-footnote">This matrix measures agreement with artificial labels created by the generator. It does not measure diagnostic accuracy, clinical sensitivity, specificity, calibration or astronaut safety.</p></article>
+        <div class="disclaimer-panel"><strong>Model card — critical limitations</strong><p>Training values and labels are invented for software demonstration. This model is not trained on NASA or clinical sensor records, cannot validate real sensor quality, and must never be used to assess an actual astronaut or patient. A real mission model would require ethically approved representative data, expert-defined endpoints, external validation, uncertainty analysis, bias testing, human-factors review and flight-medical governance.</p></div>
+      </section>
+
+      <section class="view" id="view-checkin">
+        <div class="page-heading"><div><div class="eyebrow">CREW INPUT · PERSONAL BASELINE</div><h1>Daily <em>check-in</em></h1><p class="page-subtitle">Record a simulated crew observation. New entries are saved only in this browser.</p></div><div class="flight-badge"><span class="orbit-icon">＋</span><div><small>LOCAL RECORDS</small><strong id="recordCount">07</strong></div></div></div>
+        <div class="checkin-layout">
+          <article class="panel form-panel">
+            <div class="panel-heading"><div><span class="section-kicker">NEW OBSERVATION</span><h3>Log crew health signals</h3></div><span class="form-step">01 — 02</span></div>
+            <form id="checkinForm">
+              <div class="form-grid">
+                <label class="field full-field"><span>Observation date</span><input type="date" id="entryDate" required /></label>
+                <label class="field"><span>Resting heart rate <small>(bpm)</small></span><input type="number" id="entryHr" min="30" max="220" step="1" required value="68" /><em>Enter an observed or simulated value.</em></label>
+                <label class="field"><span>Sleep duration <small>(hours)</small></span><input type="number" id="entrySleep" min="0" max="24" step="0.1" required value="7.4" /><em>Enter the previous sleep period.</em></label>
+                <label class="field"><span>Mood <small>(1 = low · 5 = positive)</small></span><select id="entryMood" required><option value="1">1 — Very low</option><option value="2">2 — Low</option><option value="3" selected>3 — Neutral</option><option value="4">4 — Positive</option><option value="5">5 — Very positive</option></select></label>
+                <label class="field"><span>Fatigue <small>(1 = low · 5 = high)</small></span><select id="entryFatigue" required><option value="1">1 — Very low</option><option value="2" selected>2 — Low</option><option value="3">3 — Moderate</option><option value="4">4 — High</option><option value="5">5 — Very high</option></select></label>
+                <label class="field"><span>Mission context <small>(optional)</small></span><select id="entryContext"><option value="Routine day">Routine day</option><option value="After exercise">After exercise</option><option value="Schedule shift">Schedule shift</option><option value="High workload">High workload</option><option value="Post-EVA simulation">Post-EVA simulation</option><option value="Other / not recorded">Other / not recorded</option></select><em>Context supports interpretation; it does not explain or diagnose a change.</em></label>
+                <label class="field full-field"><span>Optional crew note</span><textarea id="entryNote" rows="3" maxlength="300" placeholder="e.g. Synthetic check-in after scheduled exercise..."></textarea><em>Use synthetic or fictional notes only. Do not enter real personal medical information.</em></label>
+              </div>
+              <div class="form-actions"><button type="reset" class="button button-quiet">Clear form</button><button type="submit" class="button button-primary">Save observation <span>→</span></button></div>
+              <p class="form-feedback" id="formFeedback" role="status" aria-live="polite"></p>
+            </form>
+          </article>
+          <aside class="panel baseline-panel">
+            <div class="panel-heading"><div><span class="section-kicker">YOUR REFERENCE</span><h3>Demo baseline</h3></div><span class="baseline-icon">⌖</span></div>
+            <p class="muted-copy">These are fictional personal reference values for the prototype. They are not clinical targets or astronaut safety limits.</p>
+            <form id="baselineForm" class="baseline-form">
+              <label class="field"><span>Resting heart-rate baseline <small>(bpm)</small></span><input type="number" id="baselineHr" min="30" max="220" required /></label>
+              <label class="field"><span>Sleep reference <small>(hours)</small></span><input type="number" id="baselineSleep" min="0" max="24" step="0.1" required /></label>
+              <div class="rule-config-heading"><span class="section-kicker">DEMO REVIEW SENSITIVITY</span><span>Editable software rules · not medical limits</span></div>
+              <label class="field"><span>Heart-rate deviation <small>(% from reference)</small></span><input type="number" id="hrDeviationPct" min="5" max="50" step="1" required /></label>
+              <label class="field"><span>Sleep difference <small>(hours below reference)</small></span><input type="number" id="sleepDeviationHours" min="0.5" max="4" step="0.5" required /></label>
+              <label class="field"><span>Consecutive entries <small>(2–5)</small></span><input type="number" id="consecutiveEntries" min="2" max="5" step="1" required /></label>
+              <button class="button button-secondary full-button" type="submit">Update reference & demo rules</button>
+            </form>
+            <div class="baseline-rule"><span class="rule-symbol">ⓘ</span><p id="baselineRuleText">Review prompts compare recent entries with these participant-configured demo references. They are not clinical or flight-medicine thresholds.</p></div>
+          </aside>
+        </div>
+        <article class="panel history-panel"><div class="panel-heading"><div><span class="section-kicker">LOCAL HISTORY</span><h3>Recent observations</h3></div><div class="history-actions"><button class="text-button" id="resetDemo">Reset demo ↺</button><button class="text-button" id="exportCsv">Export CSV ↓</button></div></div><div class="table-wrap"><table><thead><tr><th>DATE</th><th>HEART RATE</th><th>SLEEP</th><th>MOOD</th><th>FATIGUE</th><th>CONTEXT</th><th>NOTE</th></tr></thead><tbody id="historyBody"></tbody></table></div></article>
+      </section>
+
+      <section class="view" id="view-trends">
+        <div class="page-heading"><div><div class="eyebrow">PATTERNS · PERSONAL COMPARISON</div><h1>Health <em>trends</em></h1><p class="page-subtitle">Explore how synthetic observations change across the simulated mission timeline.</p></div><button class="button button-secondary" id="downloadReport">Download data report ↓</button></div>
+        <div class="trend-grid">
+          <article class="panel wide-panel"><div class="panel-heading"><div><span class="section-kicker">PHYSIOLOGICAL SIGNAL</span><h3>Resting heart rate</h3></div><span class="panel-unit">BPM</span></div><div class="chart-wrap tall-chart"><canvas id="trendHrChart" height="280"></canvas></div><div class="chart-legend"><span><i class="legend-dot cyan"></i>Observations</span><span><i class="legend-line"></i>Personal baseline</span></div></article>
+          <article class="panel"><div class="panel-heading"><div><span class="section-kicker">RECOVERY SIGNAL</span><h3>Sleep duration</h3></div><span class="panel-unit">HOURS</span></div><div class="chart-wrap tall-chart"><canvas id="trendSleepChart" height="280"></canvas></div></article>
+          <article class="panel"><div class="panel-heading"><div><span class="section-kicker">SELF-REPORTED</span><h3>Mood & fatigue</h3></div><span class="panel-unit">1—5 SCALE</span></div><div class="chart-wrap tall-chart"><canvas id="trendWellnessChart" height="280"></canvas></div><div class="chart-legend"><span><i class="legend-dot violet"></i>Mood</span><span><i class="legend-dot rose"></i>Fatigue</span></div></article>
+        </div>
+        <div class="callout-strip"><span>↗</span><div><strong>Interpret trends in context.</strong><p>A change from baseline is a reason to review the observation, its timing and its context—not evidence of a diagnosis.</p></div></div>
+      </section>
+
+      <section class="view" id="view-mission">
+        <div class="page-heading"><div><div class="eyebrow">HUMAN SPACEFLIGHT · RESEARCH CONTEXT</div><h1>Mission <em>context</em></h1><p class="page-subtitle">Why long-duration spaceflight health monitoring is a multi-system challenge.</p></div><div class="flight-badge"><span class="orbit-icon">✧</span><div><small>MISSION PROFILE</small><strong>LONG-DURATION</strong></div></div></div>
+        <div class="mission-hero"><div class="mission-hero-copy"><span class="section-kicker">THE CHALLENGE</span><h2>The environment changes.<br/><em>So can the human body.</em></h2><p>Long-duration missions expose crew members to radiation, isolation and confinement, altered gravity and a closed environment. ASTRA-VITAL combines crew-entered observations, measurement-quality checks, mission context and research references to support structured review—not diagnosis.</p><span class="source-inline">Challenge context: NASA Space Apps 2026</span></div><div class="mission-orbit"><div class="orbit orbit-a"></div><div class="orbit orbit-b"></div><div class="earth-globe"><span></span></div><div class="orbit-dot"></div></div></div>
+        <div class="system-grid">
+          <article class="system-card"><div class="system-icon cyan-icon">♡</div><span class="section-kicker">01 / CARDIOVASCULAR</span><h3>Heart & circulation</h3><p>Spaceflight and altered gravity can influence cardiovascular adaptation. The prototype lets a crew member review resting heart-rate observations against an individual reference.</p><span class="system-status">DEMO SIGNAL: HEART RATE</span></article>
+          <article class="system-card"><div class="system-icon violet-icon">⌁</div><span class="section-kicker">02 / BEHAVIOURAL</span><h3>Sleep & wellbeing</h3><p>Isolation, confinement and disrupted schedules can affect behavioural health and sleep. The prototype includes self-reported mood, fatigue and sleep records.</p><span class="system-status">DEMO SIGNAL: SLEEP + CHECK-IN</span></article>
+          <article class="system-card"><div class="system-icon amber-icon">◇</div><span class="section-kicker">03 / MUSCULOSKELETAL</span><h3>Bone & muscle</h3><p>Altered gravity is relevant to bone and muscle health research. These topics are represented in the research library; this demo does not estimate bone density or muscle loss.</p><span class="system-status muted-status">RESEARCH CONTEXT ONLY</span></article>
+          <article class="system-card"><div class="system-icon rose-icon">✳</div><span class="section-kicker">04 / SPACE RADIATION</span><h3>Radiation exposure</h3><p>Space radiation is an important mission-health consideration. This first prototype provides research links but does not calculate radiation dose or operational exposure risk.</p><span class="system-status muted-status">RESEARCH CONTEXT ONLY</span></article>
+        </div>
+        <div class="disclaimer-panel"><strong>Design boundary</strong><p>ASTRA-VITAL is an educational simulation prototype. Its synthetic model is not validated for clinical care, astronaut flight operations, emergency response or autonomous medical recommendations. Any operational system would require qualified flight-medical oversight, validated sensors, human-factors testing, privacy controls and mission-specific standards.</p></div>
+      </section>
+
+      <section class="view" id="view-research">
+        <div class="page-heading"><div><div class="eyebrow">EVIDENCE · TRANSPARENCY</div><h1>Research <em>library</em></h1><p class="page-subtitle">NASA sources to ground the problem context. These are research references, not a live feed of astronaut records.</p></div><span class="source-count">05 REFERENCES</span></div>
+        <div class="research-intro"><div class="research-emblem">⌘</div><div><strong>Evidence before inference.</strong><p>Public human-spaceflight datasets are not necessarily continuous, real-time vital-sign streams. This prototype keeps its synthetic dashboard data separate from published research sources.</p></div></div>
+        <a class="study-spotlight clickable-resource-card" href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-575" target="_blank" rel="noopener noreferrer" aria-label="Open NASA OSDR study OSD-575 in a new tab">
+          <div class="study-visual"><span>OSDR</span><strong>OSD-575</strong><small>INSPIRATION4 · HUMAN SPACEFLIGHT</small></div>
+          <div class="study-detail"><div class="source-meta"><span>NASA OPEN SCIENCE DATA REPOSITORY</span><span class="source-type">REFERENCE STUDY</span></div><h3>Blood serum metabolic panel & immune/cardiac cytokine arrays</h3><p>OSD-575 documents blood-serum samples collected before and after the 2021 Inspiration4 mission. The study includes comprehensive metabolic and immune/cardiovascular biomarker assays. It is a research dataset—not continuous in-flight heart-rate monitoring and not a source of the synthetic readings displayed in this app.</p><div class="study-tags"><span>Homo sapiens</span><span>Pre/post-flight samples</span><span>Biomarker assays</span></div><span class="resource-open-label">OPEN NASA STUDY OSD-575 ↗</span></div>
+        </a>
+        <div class="osdr-explorer panel"><div><span class="section-kicker">LIVE RESEARCH DISCOVERY</span><h3>Search NASA OSDR</h3><p>Open the NASA repository with a topic query. Review each study's organism, assays, sample types, timepoints and access conditions before using it.</p></div><form id="osdrSearchForm" class="osdr-search"><input id="osdrSearchTerm" value="spaceflight AND cardiovascular" aria-label="NASA OSDR search terms" maxlength="120"/><button type="submit" class="button button-primary">Search OSDR ↗</button></form></div>
+        <div class="source-list">
+          <a class="source-card source-card-link clickable-resource-card" href="https://osdr.nasa.gov/" target="_blank" rel="noopener noreferrer" aria-label="Explore OSDR in a new tab"><div class="source-index">01</div><div class="source-copy"><div class="source-meta"><span>NASA · AMES RESEARCH CENTER</span><span class="source-type">DATA REPOSITORY</span></div><h3>Open Science Data Repository (OSDR)</h3><p>Space-relevant biological studies, including research on cardiovascular changes, bone and muscle, immune responses and radiation effects. Individual studies differ in population, measurement type and access conditions.</p><span class="resource-open-label">Explore OSDR ↗</span></div></a>
+          <a class="source-card source-card-link clickable-resource-card" href="https://nlsp.nasa.gov/" target="_blank" rel="noopener noreferrer" aria-label="Explore Life Sciences Portal in a new tab"><div class="source-index">02</div><div class="source-copy"><div class="source-meta"><span>NASA · HUMAN RESEARCH</span><span class="source-type">RESEARCH ARCHIVE</span></div><h3>NASA Life Sciences Portal</h3><p>Access point for human research data from spaceflight and ground-analog studies, including physiology, cardiovascular, bone, sleep and behavioural-health research. Some datasets may have access restrictions.</p><span class="resource-open-label">Explore Life Sciences Portal ↗</span></div></a>
+          <a class="source-card source-card-link clickable-resource-card" href="https://www.nasa.gov/hrp/" target="_blank" rel="noopener noreferrer" aria-label="Explore NASA HRP in a new tab"><div class="source-index">03</div><div class="source-copy"><div class="source-meta"><span>NASA</span><span class="source-type">PROGRAMME OVERVIEW</span></div><h3>Human Research Program (HRP)</h3><p>Research programme context for understanding health and performance risks associated with human space exploration.</p><span class="resource-open-label">Explore NASA HRP ↗</span></div></a>
+          <a class="source-card source-card-link clickable-resource-card" href="https://science.nasa.gov/reference/osdr-faq/" target="_blank" rel="noopener noreferrer" aria-label="Read OSDR FAQ in a new tab"><div class="source-index">04</div><div class="source-copy"><div class="source-meta"><span>NASA · SCIENCE</span><span class="source-type">DATA ACCESS GUIDE</span></div><h3>OSDR Frequently Asked Questions</h3><p>Guidance on searching OSDR studies, accessing datasets and understanding data-access restrictions.</p><span class="resource-open-label">Read OSDR FAQ ↗</span></div></a>
+          <a class="source-card source-card-link clickable-resource-card" href="https://science.nasa.gov/humans-in-space/nasas-repository-supports-research-of-commercial-astronaut-health/" target="_blank" rel="noopener noreferrer" aria-label="Read NASA article in a new tab"><div class="source-index">05</div><div class="source-copy"><div class="source-meta"><span>NASA · HUMAN SPACEFLIGHT</span><span class="source-type">DATASET STORY</span></div><h3>NASA's repository supports research of commercial astronaut health</h3><p>Explains the Inspiration4 mission research dataset and its contribution to open-access human spaceflight biological research.</p><span class="resource-open-label">Read NASA article ↗</span></div></a>
+        </div>
+        <div class="citation-note"><span>ⓘ</span><p><strong>Data provenance:</strong> The initial dashboard and sample history use synthetic values created for this prototype. No private astronaut medical records are used. NASA references above inform the research context; they are not represented as direct sources for the synthetic readings.</p></div>
+        <div class="citation-note ai-disclosure-note"><span>✦</span><p><strong>AI-use disclosure:</strong> ChatGPT assisted with initial concept framing, interface drafting, code, documentation and testing suggestions. A locally executed Random Forest model is trained only on 18,000 explicitly synthetic scenario rows generated by the project script. It predicts synthetic scenario labels, not medical conditions or astronaut risk. Full disclosure is included in <code>AI_DISCLOSURE.md</code>.</p></div>
+      </section>
+
+      <section class="view" id="view-evidence">
+        <div class="page-heading"><div><div class="eyebrow">NASA OPEN DATA · REPRODUCIBLE REVIEW</div><h1>Evidence <em>lab</em></h1><p class="page-subtitle">Inspect a real NASA study, then analyse a dataset file on this device without uploading it.</p></div><span class="source-count">OSDR · OSD-575</span></div>
+
+        <div class="research-intro"><div class="research-emblem">⌗</div><div><strong>Keep evidence and demonstration signals separate.</strong><p>OSD-575 is a human blood-serum biomarker study from the Inspiration4 mission. It is not continuous in-flight heart-rate telemetry. The charts below describe study metadata; the file importer analyses the actual CSV/TSV you select.</p></div></div>
+        <div class="citation-note eligibility-note"><span>!</span><p><strong>Challenge-resource eligibility check:</strong> NASA Space Apps guidance says Global Award eligibility requires meaningful use of at least one NASA data source listed in this specific challenge's Resources tab. Confirm the exact resource there before claiming the requirement is met. The challenge Navigator also explains that a hybrid of accessible NASA research data and clearly labelled synthetic telemetry can be appropriate when a unified real-time astronaut dataset is unavailable. <a href="https://github.com/nasa/spaceapps/discussions/1827" target="_blank" rel="noopener noreferrer">Resources guidance ↗</a> · <a href="https://github.com/nasa/spaceapps/discussions/2025" target="_blank" rel="noopener noreferrer">Data availability guidance ↗</a></p></div>
+
+        <div class="evidence-stat-grid">
+          <article class="evidence-stat"><span>STUDY ACCESSION</span><strong>OSD-575</strong><small>Version 3 · DOI 10.26030/mc5d-p710</small></article>
+          <article class="evidence-stat"><span>BIOSPECIMENS</span><strong>28</strong><small>Sample table reported by OSDR</small></article>
+          <article class="evidence-stat"><span>MISSION</span><strong>3 days</strong><small>Inspiration4 · September 2021</small></article>
+          <article class="evidence-stat"><span>LICENSE</span><strong>CC0-1.0</strong><small>As listed on the OSDR study page</small></article>
+        </div>
+
+        <article class="panel evidence-panel">
+          <div class="panel-heading"><div><span class="section-kicker">STUDY DESIGN · SOURCE METADATA</span><h3>Collection windows</h3></div><span class="panel-unit">PRE / POST FLIGHT</span></div>
+          <div class="timeline-track">
+            <div class="timeline-phase"><strong>PRE-FLIGHT</strong><div class="timepoint-list"><span>L−92</span><span>L−44</span><span>L−3</span></div></div>
+            <div class="timeline-connector"><span>3-day flight</span><i></i></div>
+            <div class="timeline-phase post-phase"><strong>POST-FLIGHT</strong><div class="timepoint-list"><span>R+1</span><span>R+45</span><span>R+82</span></div></div>
+          </div>
+          <p class="evidence-footnote">The OSDR sample table also lists an R+194 record for one sample. See the source study for the complete sample-level metadata. These are collection timepoints, not continuous monitoring.</p>
+        </article>
+
+        <div class="evidence-two-col">
+          <article class="panel evidence-panel"><div class="panel-heading"><div><span class="section-kicker">MEASUREMENT TYPES</span><h3>What OSD-575 measures</h3></div></div>
+            <div class="assay-list">
+              <div><span class="assay-bullet cyan-bullet"></span><section><strong>Cardiovascular biomarker panel</strong><p>Eve Technologies HDCVD9 multiplex immunoassay.</p></section></div>
+              <div><span class="assay-bullet violet-bullet"></span><section><strong>Immune / cytokine panel</strong><p>HD71 and Alamar NULISA-seq inflammation-related protein profiling.</p></section></div>
+              <div><span class="assay-bullet amber-bullet"></span><section><strong>Comprehensive metabolic panel</strong><p>Quest Diagnostics analytical chemistry on serum samples.</p></section></div>
+            </div>
+          </article>
+          <article class="panel evidence-panel"><div class="panel-heading"><div><span class="section-kicker">INTERPRETATION BOUNDARY</span><h3>What this study cannot tell us</h3></div></div>
+            <ul class="boundary-list"><li>It does not provide a continuous heart-rate or sleep stream.</li><li>It describes a short Inspiration4 mission, not a long-duration mission.</li><li>Biomarker measurements are not interchangeable with clinical diagnoses.</li><li>Pre/post-flight associations do not prove that spaceflight caused every observed change.</li></ul>
+            <a class="inline-source-link" href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-575" target="_blank" rel="noopener noreferrer">Open the authoritative OSDR study ↗</a>
+          </article>
+        </div>
+
+        <article class="panel importer-panel">
+          <div class="panel-heading"><div><span class="section-kicker">LOCAL DATA WORKBENCH</span><h3>Import an OSDR CSV / TSV file</h3></div><span class="panel-unit">BROWSER-ONLY PROCESSING</span></div>
+          <p class="muted-copy">Download a transformed or processed data file from the NASA OSDR study's Files section, then select it here. The selected file is parsed in your browser; ASTRA-VITAL does not upload it to a server.</p>
+          <div class="import-instructions"><strong>How to get a file</strong><ol><li>Open OSD-575 in NASA OSDR and inspect the <b>Files</b> section.</li><li>Read the file descriptions and data dictionary; distinguish sample metadata from assay-result data.</li><li>Download an appropriate public processed CSV/TSV file. If OSDR provides a ZIP archive, use Windows <b>Extract All</b> first, then select the CSV/TSV inside it.</li><li>If a file contains only metadata, analyse it only as metadata—do not describe it as biomarker measurements.</li><li>Confirm that the source is included in the selected 2026 challenge's Resources tab before claiming Global Award data eligibility.</li></ol><a href="https://osdr.nasa.gov/bio/repo/data/studies/OSD-575" target="_blank" rel="noopener noreferrer">Open OSD-575 study page ↗</a> <a href="https://osdr.nasa.gov/osdr/data/osd/files/575" target="_blank" rel="noopener noreferrer">Open OSDR file catalog (API) ↗</a></div>
+          <div class="import-controls">
+            <label class="field"><span>Study / source accession</span><input type="text" id="sourceAccession" value="OSD-575" maxlength="50" /></label>
+            <label class="field"><span>Header row number</span><input type="number" id="headerRowNumber" value="1" min="1" max="50" step="1" /></label>
+            <label class="field file-field"><span>Choose downloaded data file</span><input type="file" id="osdrDataFile" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values" /></label>
+          </div>
+          <div class="import-context-grid">
+            <label class="field"><span>Measurement units <small>(as written in the source)</small></span><input type="text" id="measureUnits" maxlength="50" placeholder="e.g. pg/mL, ng/mL, relative abundance" /></label>
+            <label class="field"><span>Source license <small>(verify on NASA study page)</small></span><input type="text" id="sourceLicense" maxlength="80" value="Check source study" /></label>
+            <label class="field"><span>Data dictionary note <small>(optional)</small></span><input type="text" id="dataDictionaryNote" maxlength="180" placeholder="e.g. transformed serum cytokine concentration" /></label>
+          </div>
+          <div class="import-actions"><button type="button" class="button button-primary" id="analyzeOdsrFile" disabled>Analyse selected file →</button><span id="importStatus" class="form-feedback" role="status" aria-live="polite">No file selected.</span></div>
+          <div id="importResults" class="import-results hidden">
+            <div class="import-result-head"><div><strong id="importFileName">Imported file</strong><span id="importFileMeta">—</span></div><span class="source-type">LOCAL IMPORT · NOT VERIFIED BY NASA</span></div>
+            <div class="import-provenance">
+              <div><span>FILE SHA-256</span><strong id="importFileHash">Calculating…</strong></div>
+              <div><span>LOCAL PROCESSING</span><strong>Browser only · no upload</strong></div>
+              <div><span>PROVENANCE STATUS</span><strong id="importProvenanceStatus">Participant-selected file</strong></div>
+            </div>
+            <div class="import-mapping">
+              <label class="field"><span>Numeric measure to summarise</span><select id="measureColumn"></select></label>
+              <label class="field"><span>Optional sample / timepoint group</span><select id="groupColumn"></select></label>
+            </div>
+            <div id="importMetrics" class="import-metrics"></div>
+            <div class="import-chart-wrap"><div class="panel-heading"><div><span class="section-kicker">DESCRIPTIVE SUMMARY</span><h3 id="importChartTitle">Selected measure</h3></div><span class="panel-unit">SOURCE UNITS RETAINED</span></div><div id="importBars" class="import-bars"></div></div>
+            <div class="table-wrap import-table-wrap"><table><thead id="importTableHead"></thead><tbody id="importTableBody"></tbody></table></div>
+            <div class="import-report-actions"><button type="button" class="button button-secondary" id="downloadAnalysisReport">Download reproducibility report ↓</button><button type="button" class="button button-secondary" id="downloadGroupSummary">Download grouped summary CSV ↓</button><button type="button" class="button button-ghost" id="clearImportedDataset">Clear imported file</button></div>
+            <p class="evidence-footnote">Statistics are descriptive only. They do not establish causality, health status, clinical significance, or astronaut safety thresholds. Confirm the file's data dictionary, units, transformations, sample population and license before drawing conclusions. A SHA-256 fingerprint helps identify the exact selected file; it does not independently prove that the file came from NASA.</p>
+          </div>
+        </article>
+        <div class="citation-note"><span>ⓘ</span><p><strong>Source and provenance:</strong> NASA OSDR OSD-575, Version 3, DOI 10.26030/mc5d-p710, CC0-1.0 as shown on the source page. File contents imported by a participant are labelled as user-selected and are not independently authenticated by this offline prototype.</p></div>
+      </section>
+
+      <footer class="app-footer"><span>ASTRA-VITAL · EDUCATIONAL PROTOTYPE</span><span>LOCAL-FIRST · NO ACCOUNT REQUIRED</span><span>NOT AFFILIATED WITH OR ENDORSED BY NASA</span></footer>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="model.js"></script>
+  <script src="mission-features.js"></script>
+  <script src="astra-3d-anatomy.js"></script>
+  <script src="real-anatomy-loader.js"></script>
+  <script src="body-view-ui.js"></script>
+  <script src="app.js"></script>
+  <script src="evidence-lab.js"></script>
+</body>
+</html>

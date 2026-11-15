@@ -1,0 +1,32 @@
+/* ASTRA-VITAL 1.6.0: true interactive WebGL anatomy viewport */
+#bodyVisualStage .body-image-wrap.body-3d-wrap{
+  position:absolute!important;inset:0!important;left:0!important;top:0!important;
+  width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;
+  transform:none!important;perspective:none!important;z-index:2!important;pointer-events:none!important;
+  display:block!important;overflow:hidden!important;
+}
+#bodyVisualStage .body-3d-wrap[hidden]{display:none!important}
+#astraAnatomy3DCanvas{
+  position:absolute!important;inset:0!important;display:block!important;width:100%!important;height:100%!important;
+  z-index:1!important;pointer-events:auto!important;cursor:grab;touch-action:none;
+  filter:drop-shadow(0 16px 30px rgba(26,142,230,.12));outline:none;
+}
+#astraAnatomy3DCanvas:active{cursor:grabbing}
+#anatomyPointerLayer{position:absolute!important;inset:0!important;z-index:5!important;pointer-events:none!important}
+#anatomyPointerLayer .body-hotspot-v3{pointer-events:auto!important}
+#bodyVisualStage .body-stage-watermark{z-index:8!important}
+#bodyVisualStage .body-stage-caption{z-index:8!important}
+#bodyVisualStage .body-profile-gate{z-index:9!important}
+#bodyVisualStage .body-stage-grid,#bodyVisualStage .body-stage-orbit{pointer-events:none!important}
+#bodyVisualStage.profile-ready:after{opacity:.48}
+.astra-3d-fallback{
+  position:absolute;inset:18% 12%;z-index:10;display:grid;place-items:center;text-align:center;
+  padding:24px;border:1px solid rgba(99,190,255,.35);border-radius:16px;
+  color:#d9efff;background:rgba(2,13,27,.94);font:600 13px/1.65 var(--display,Arial);
+  box-shadow:0 18px 50px rgba(0,0,0,.42);backdrop-filter:blur(16px)
+}
+#bodyVisualStage .body-hotspot-v3{transition:left .08s linear,top .08s linear}
+#bodyVisualStage .body-hotspot-v3[style*="display: none"]{pointer-events:none}
+#bodyVisualStage.motion-auto .stage-caption-dot{box-shadow:0 0 12px #55caff}
+@media(max-width:760px){#astraAnatomy3DCanvas{touch-action:none}}
+@media(prefers-reduced-motion:reduce){#bodyVisualStage .body-hotspot-v3{transition:none!important}}

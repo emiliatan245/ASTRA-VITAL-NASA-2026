@@ -1,0 +1,13 @@
+ASTRA-VITAL v1.4.0 — INSTALL
+
+1. Back up your existing ASTRA_VITAL folder.
+2. Extract this ZIP to a new folder named ASTRA_VITAL_v1.4.0.
+3. Keep all included files and the assets folder together.
+4. Double-click index.html.
+5. Use Enter Flight Deck to open the main app.
+6. Open Anatomy Explorer and choose Male body or Female body first.
+7. Choose Normal body, Nervous system, Organs & circulation, Skeleton, or Muscular system.
+
+For existing installs, use the separate Update Patch ZIP. Copy every file and asset included in that patch into the existing project folder and replace the files.
+
+Keep a backup of local browser records / exported CSV before replacing the old installation.

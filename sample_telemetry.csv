@@ -1,0 +1,8 @@
+date,heart_rate_bpm,sleep_hours,mood_1_to_5,fatigue_1_to_5,mission_context,note,data_origin
+2026-11-08,65,8.1,4,2,Routine day,Synthetic demo observation,SYNTHETIC
+2026-11-09,67,7.8,4,2,After exercise,Synthetic demo observation,SYNTHETIC
+2026-11-10,66,8.2,3,2,Routine day,Synthetic demo observation,SYNTHETIC
+2026-11-11,68,7.6,3,3,High workload,Synthetic demo observation,SYNTHETIC
+2026-11-12,67,7.9,4,2,Routine day,Synthetic demo observation,SYNTHETIC
+2026-11-13,69,7.5,3,2,Schedule shift,Synthetic demo observation,SYNTHETIC
+2026-11-14,68,7.4,3,2,Schedule shift,Synthetic demo observation,SYNTHETIC
